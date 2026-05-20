@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Just Callahan LLC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a0e1a;
+      --deep: #111827;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --cream: #f5f0e8;
+      --white: #ffffff;
+      --gray: #8a9ab5;
+      --border: rgba(201,168,76,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--navy);
+      color: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 4rem;
+      background: rgba(10,14,26,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      animation: fadeDown 1s ease forwards;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 8rem 4rem 4rem;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 40%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 50%),
+        linear-gradient(160deg, #0d1221 0%, #0a0e1a 50%, #070a12 100%);
+    }
+
+    .hero-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      opacity: 0.15;
+    }
+    .hero-line:nth-child(1) { left: 15%; animation: lineGlow 4s ease-in-out infinite; }
+    .hero-line:nth-child(2) { left: 50%; animation: lineGlow 4s ease-in-out 1s infinite; }
+    .hero-line:nth-child(3) { right: 15%; animation: lineGlow 4s ease-in-out 2s infinite; }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 900px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 300;
+      line-height: 1.0;
+      color: var(--white);
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.5s forwards;
+    }
+
+    .hero-title span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: 300;
+      color: var(--gray);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.7s forwards;
+    }
+
+    .hero-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.9s forwards;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--gray);
+      max-width: 600px;
+      margin: 0 auto 3rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.1s forwards;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: all 0.4s;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.3s forwards;
+    }
+
+    .hero-cta:hover {
+      background: var(--gold);
+      color: var(--navy);
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.2rem 0;
+      overflow: hidden;
+      background: rgba(201,168,76,0.03);
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      animation: marquee 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee-item {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    .marquee-dot {
+      color: var(--gold);
+      opacity: 0.3;
+    }
+
+    /* ── SECTION BASE ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 4rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.2;
+      max-width: 700px;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* ── ABOUT ── */
+    .about {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      max-width: 1200px;
+      margin: 4rem auto 0;
+      align-items: center;
+    }
+
+    .about-text p {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text p strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .stat-card {
+      background: rgba(201,168,76,0.04);
+      border: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      transition: background 0.3s;
+    }
+
+    .stat-card:hover { background: rgba(201,168,76,0.08); }
+
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ── VALUES ── */
+    .values {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 4rem;
+      border: 1px solid var(--border);
+    }
+
+    .value-card {
+      padding: 3rem 2.5rem;
+      border-right: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+
+    .value-card:last-child { border-right: none; }
+
+    .value-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .value-card:hover { background: rgba(201,168,76,0.04); }
+    .value-card:hover::before { transform: scaleX(1); }
+
+    .value-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem;
+      font-weight: 300;
+      color: rgba(201,168,76,0.12);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .value-name {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .value-desc {
+      font-size: 0.92rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--gray);
+    }
+
+    /* ── APPROACH ── */
+    .approach {
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .approach-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .approach-list {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .approach-item {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 2rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: all 0.3s;
+      cursor: default;
+    }
+
+    .approach-item:hover .approach-title { color: var(--gold); }
+
+    .approach-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      color: rgba(201,168,76,0.3);
+    }
+
+    .approach-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--white);
+      transition: color 0.3s;
+    }
+
+    .approach-desc {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--gray);
+    }
+
+    /* ── CONTACT ── */
+    .contact {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .contact-wrap {
+      padding: 7rem 4rem;
+    }
+
+    .contact-email {
+      display: inline-block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 300;
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid var(--gold);
+      padding-bottom: 0.25rem;
+      margin-top: 2rem;
+      transition: opacity 0.3s;
+    }
+
+    .contact-email:hover { opacity: 0.7; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: var(--gray);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes lineGlow {
+      0%, 100% { opacity: 0.1; }
+      50%       { opacity: 0.25; }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 2rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .values-grid { grid-template-columns: 1fr; }
+      .value-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .approach-item { grid-template-columns: 50px 1fr; }
+      .approach-desc { display: none; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .contact-wrap { padding: 5rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Just Callahan LLC</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#values">Values</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <div class="hero-line"></div>
+  <div class="hero-line"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Established &mdash; Built to Last</p>
+    <h1 class="hero-title">Just <span>Callahan</span><br>LLC</h1>
+    <p class="hero-sub">Excellence Without Compromise</p>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">
+      Industry leaders choose Callahan for a reason. We deliver results through
+      disciplined execution, strategic clarity, and an unwavering commitment to
+      the highest standards in every endeavor.
+    </p>
+    <a href="#about" class="hero-cta">
+      Discover Our Approach
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <!-- doubled for seamless loop -->
+    <span class="marquee-item">Trusted Leadership</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Strategic Excellence</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Proven Results</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Integrity First</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Culture of Safety</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Operational Precision</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Scalable Solutions</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Trusted Leadership</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Strategic Excellence</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Proven Results</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Integrity First</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Culture of Safety</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Operational Precision</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Scalable Solutions</span><span class="marquee-dot">◆</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-grid reveal">
+    <div class="about-left">
+      <p class="section-label">Who We Are</p>
+      <h2 class="section-title">The Standard<br><em>Others Aspire To</em></h2>
+    </div>
+    <div style="display:none"></div>
+  </div>
+  <div class="about-grid reveal" style="margin-top:3rem;">
+    <div class="about-text">
+      <p>
+        <strong>Just Callahan LLC</strong> operates at the intersection of
+        expertise and ambition. We are a multi-disciplinary enterprise built on
+        a foundation of accountability, performance, and forward-thinking
+        strategy — delivering value across every sector we enter.
+      </p>
+      <p>
+        Our leadership brings decades of real-world operational experience to
+        every engagement. We don't just meet industry benchmarks — we define
+        them. Professionals at the top of their fields trust Callahan because
+        our track record speaks for itself.
+      </p>
+      <p>
+        Whether navigating complex market dynamics or executing on the ground
+        level, our team applies the same rigorous standard: <strong>do it
+        right, do it safely, and deliver results that last.</strong>
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Commitment to Excellence</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">Zero</div>
+        <div class="stat-label">Compromise on Safety</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">Multi</div>
+        <div class="stat-label">Industry Presence</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">Long</div>
+        <div class="stat-label">Term Vision</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section id="values">
+  <div class="values reveal">
+    <p class="section-label">Our Foundation</p>
+    <h2 class="section-title">Core Values That<br><em>Drive Everything</em></h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-number">01</div>
+        <div class="value-name">Safety Above All</div>
+        <p class="value-desc">
+          A culture of safety isn't a policy — it's a mindset embedded in
+          every decision we make. We protect our people, our partners, and
+          the communities we serve without exception.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">02</div>
+        <div class="value-name">Integrity by Default</div>
+        <p class="value-desc">
+          We operate with radical transparency and unwavering honesty.
+          Our word is our contract. Every relationship is built on the
+          bedrock of trust earned through consistent, ethical action.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">03</div>
+        <div class="value-name">Relentless Excellence</div>
+        <p class="value-desc">
+          Mediocrity is not in our vocabulary. We hold ourselves to the
+          highest professional standards and continuously raise the bar —
+          because good enough never is.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">04</div>
+        <div class="value-name">Accountability</div>
+        <p class="value-desc">
+          We own our outcomes. Success or challenge, Callahan stands
+          behind its commitments and its people — no excuses, no
+          deflection, only solutions.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">05</div>
+        <div class="value-name">Strategic Vision</div>
+        <p class="value-desc">
+          We think three moves ahead. Every initiative is anchored in
+          long-term strategy, ensuring that today's actions build tomorrow's
+          durable competitive advantage.
+        </p>
+      </div>
+      <div class="value-card">
+        <div class="value-number">06</div>
+        <div class="value-name">People First</div>
+        <p class="value-desc">
+          Our greatest asset is the people in and around this organization.
+          We invest in relationships, nurture talent, and build teams that
+          perform at an elite level — together.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="approach" id="approach">
+  <div class="approach-inner reveal">
+    <p class="section-label">How We Operate</p>
+    <h2 class="section-title">A Disciplined<br><em>Method of Execution</em></h2>
+    <div class="approach-list">
+      <div class="approach-item">
+        <span class="approach-num">01</span>
+        <span class="approach-title">Assess &amp; Align</span>
+        <span class="approach-desc">We begin every engagement with deep situational analysis — understanding the landscape, the stakeholders, and the opportunity before a single resource is deployed.</span>
+      </div>
+      <div class="approach-item">
+        <span class="approach-num">02</span>
+        <span class="approach-title">Strategize with Precision</span>
+        <span class="approach-desc">Our leadership architects bespoke strategies engineered to specific objectives — no generic playbooks, no off-the-shelf thinking.</span>
+      </div>
+      <div class="approach-item">
+        <span class="approach-num">03</span>
+        <span class="approach-title">Execute with Discipline</span>
+        <span class="approach-desc">Execution is where promises become results. Callahan applies operational rigor at every level to ensure delivery that matches and exceeds expectations.</span>
+      </div>
+      <div class="approach-item">
+        <span class="approach-num">04</span>
+        <span class="approach-title">Measure &amp; Optimize</span>
+        <span class="approach-desc">We are data-informed and performance-driven. Continuous feedback loops ensure we adapt, improve, and scale what works — relentlessly.</span>
+      </div>
+      <div class="approach-item">
+        <span class="approach-num">05</span>
+        <span class="approach-title">Build for the Long Game</span>
+        <span class="approach-desc">Short-term wins matter. Long-term sustainability is the goal. Every engagement is designed to create lasting value, not just immediate returns.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-wrap" id="contact">
+  <div class="contact reveal">
+    <p class="section-label">Get In Touch</p>
+    <h2 class="section-title" style="margin:0 auto; text-align:center;">Ready to Work<br><em>With the Best?</em></h2>
+    <p style="margin-top:1.5rem; font-size:0.95rem; font-weight:300; line-height:1.9; color:var(--gray);">
+      We engage with partners who share our standard of excellence.
+      If you're ready to move with purpose and precision, reach out —
+      Callahan is ready.
+    </p>
+    <a href="mailto:info@justcallahan.com" class="contact-email">info@justcallahanllc.com</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Just Callahan LLC</div>
+  <div class="footer-copy">&copy; 2026 Just Callahan LLC. All rights reserved.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
